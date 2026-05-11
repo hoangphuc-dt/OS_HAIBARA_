@@ -1,81 +1,138 @@
-﻿#include <iostream>
-#include <vector>
-#include <Windows.h>      // Thư viện để hỗ trợ tiếng Việt trên Console
-#include "cpu_scheduler.h" // PHẢI CÓ để kết nối với module CPU
-
-using namespace std;
+﻿#include "PageReplacement.h"
+#include "DeadlockHandler.h"
 
 int main() {
-    // Thiết lập hiển thị tiếng Việt có dấu trên Console
-    SetConsoleOutputCP(65001);
+    system("mode con cols=140 lines=45");
+    int mainChoice = 0;
 
-    int choice;
+    char key;
+
     while (true) {
-        system("cls"); // Xóa màn hình cho sạch mỗi lần chọn lại
-        cout << "===============================================\n";
-        cout << "      DO AN HE DIEU HANH - NHOM HAIBARA        \n";
-        cout << "===============================================\n";
-        cout << "1. Dieu phoi CPU \n";
-        cout << "2. Xu ly Deadlock \n";
-        cout << "3. Thay the trang OPT \n";
-        cout << "0. Thoat chuong trinh\n";
-        cout << "===============================================\n";
-        cout << "Lua chon cua ban: ";
-        cin >> choice;
-
-        if (choice == 0) break;
-
-        switch (choice) {
-        case 1: {
-            // ĐOẠN NÀY LÀ LOGIC MAIN CŨ CỦA BẠN ĐƯỢC ĐƯA VÀO ĐÂY
+        while (true) {
             system("cls");
-            cout << "--- TRINH MO PHONG DIEU PHOI CPU ---\n";
-            cout << "  1. FCFS\n";
-            cout << "  2. SJF (Non-Preemptive)\n";
-            cout << "  3. SRTF (Preemptive)\n";
-            cout << "  4. Priority (Non-Preemptive)\n";
-            cout << "  5. Priority (Preemptive)\n";
-            cout << "  6. Round Robin (RR)\n";
-            cout << "Chon thuat toan: ";
+            setColor(GREEN);
+            cout << "\n========== THAY HUY DEP TRAI ==========\n";
 
-            int cpuChoice;
-            cin >> cpuChoice;
 
-            bool hasPriority = (cpuChoice == 4 || cpuChoice == 5);
+            for (int i = 0; i < 3; i++) {
+                if (i == mainChoice) {
+                    setColor(RED);
 
-            // Gọi hàm nhập liệu từ file cpu_scheduler.cpp
-            vector<Process> procs = readProcesses(hasPriority);
-
-            if (!procs.empty()) {
-                switch (cpuChoice) {
-                case 1: runFCFS(procs); break;
-                case 2: runSJF(procs); break;
-                case 3: runSRTF(procs); break;
-                case 4: runPriorityNP(procs); break;
-                case 5: runPriorityP(procs); break;
-                case 6: {
-                    int q;
-                    cout << "Time Quantum: "; cin >> q;
-                    if (q > 0) runRoundRobin(procs, q);
-                    break;
                 }
+                else {
+                    setColor(WHITE); // Màu cho các dòng khác
+
+                }
+
+                switch (i) {
+                case 0: cout << "1. Page Replacement \n"; break;
+                case 1: cout << "2. Banker's Algorithm \n"; break;
+                case 2: cout << "0. Exit \n"; break;
                 }
             }
-            break;
-        }
-        case 2:
-            cout << "\n[!] Module Deadlock dang duoc xay dung...\n";
-            break;
-        case 3:
-            cout << "\n[!] Module Thay the trang OPT dang duoc xay dung...\n";
-            break;
-        default:
-            cout << "\nLua chon khong hop le!\n";
+
+            setColor(GREEN);
+            cout << "===========================================\n";
+            setColor(YELLOW);
+            cout << "Dung mui ten LEN/XUONG va ENTER de chon\n";
+            setColor(WHITE);
+
+            // Bắt sự kiện phím
+            key = _getch();
+
+
+            if (key == 224 || key == 0)
+            {
+                key = _getch();
+            }
+
+
+            if (key == 72)
+            {
+                mainChoice = (mainChoice - 1 + 3) % 3;
+            }
+
+
+            else if (key == 80)
+            {
+                mainChoice = (mainChoice + 1) % 3;
+            }
+
+            else if (key == 13)
+            {
+                break;
+            }
         }
 
-        cout << "\n";
-        system("pause"); // Dừng màn hình để xem kết quả trước khi quay lại menu
+        system("cls");
+        if (mainChoice == 0) {
+            // Chèn logic main của Page Replacement vào đây
+            int n; setColor(14); cout << "Nhap so luong trang: "; setColor(7); cin >> n;
+            vector<int> pages(n); setColor(11); cout << "Nhap chuoi tham chieu:\n"; setColor(7);
+            for (int i = 0; i < n; i++) cin >> pages[i];
+            int f; setColor(10); cout << "Nhap so frame: "; setColor(7); cin >> f;
+            int choice = 0; char key;
+            while (true) {
+                while (true) {
+                    system("cls"); showMenu(choice); key = _getch();
+                    if (key == 224 || key == 0) key = _getch();
+                    if (key == 72) choice = (choice - 1 + 6) % 6;
+                    else if (key == 80) choice = (choice + 1) % 6;
+                    else if (key == 13) break;
+                }
+                system("cls");
+                if (choice == 5) break; // Quay lai menu chinh
+                switch (choice) {
+                case 0: { vector<Step> rs = FIFO(pages, f); printSimulation(rs, "FIFO ALGORITHM", f); printResult(rs); break; }
+                case 1: { vector<Step> rs = LRU(pages, f); printSimulation(rs, "LRU ALGORITHM", f); printResult(rs); break; }
+                case 2: { vector<Step> rs = OPT(pages, f); printSimulation(rs, "OPT ALGORITHM", f); printResult(rs); break; }
+                case 3: { vector<Step> rs = CLOCK(pages, f); printSimulation(rs, "CLOCK ALGORITHM", f); printResult(rs); break; }
+                case 4: {
+                    vector<Step> fR = FIFO(pages, f); vector<Step> lR = LRU(pages, f);
+                    vector<Step> oR = OPT(pages, f); vector<Step> cR = CLOCK(pages, f);
+                    printSimulation(fR, "FIFO", f); printResult(fR);
+                    printSimulation(lR, "LRU", f); printResult(lR);
+                    printSimulation(oR, "OPT", f); printResult(oR);
+                    printSimulation(cR, "CLOCK", f); printResult(cR);
+                    compareAlgorithms(fR, lR, oR, cR); break;
+                }
+                }
+                system("pause");
+            }
+        }
+        else if (mainChoice == 1) {
+            // Chèn logic main của Deadlock vào đây
+            int choice = 0; char key;
+            while (true) {
+                while (true) {
+                    system("cls"); setColor(GREEN); cout << "\n==========    Banker's Algorithm  ==========\n";
+                    for (int i = 0; i < 4; i++) {
+                        if (i == choice) setColor(RED); else setColor(WHITE);
+                        if (i == 0) cout << "1. Safety\n"; else if (i == 1) cout << "2. Request\n";
+                        else if (i == 2) cout << "3. Deadlock Detection\n"; else cout << "4. Exit\n";
+                    }
+                    setColor(GREEN);
+                    cout << "===========================================\n";
+
+                    setColor(YELLOW);
+                    cout << "Dung mui ten LEN/XUONG va ENTER de chon";
+                    key = _getch();
+                    if (key == 224 || key == 0) key = _getch();
+                    if (key == 72) choice = (choice - 1 + 4) % 4;
+                    else if (key == 80) choice = (choice + 1) % 4;
+                    else if (key == 13) break;
+                }
+                system("cls");
+                if (choice == 3) break;
+                switch (choice) {
+                case 0: safetyAlgorithm(); break;
+                case 1: requestAlgorithm(); break;
+                case 2: deadlockDetection(); break;
+                }
+                system("pause");
+            }
+        }
+        else if (mainChoice == 2) break;
     }
-
     return 0;
 }

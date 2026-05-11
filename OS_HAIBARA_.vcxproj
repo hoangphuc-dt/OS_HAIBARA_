@@ -124,10 +124,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="cpu_scheduler.h" />
+    <ClInclude Include="DeadlockHandler.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="PageReplacement.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cpu_scheduler.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PageReplacement.cpp" />
+    <ClCompile Include="DeadlockHandler.cpp" />
+    <ClCompile Include="Common.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
