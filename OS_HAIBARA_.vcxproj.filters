@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cpu_scheduler.h">
+    <ClInclude Include="CPUScheduler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PageReplacement.h">
@@ -29,7 +29,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cpu_scheduler.cpp">
+    <ClCompile Include="CPUScheduler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">

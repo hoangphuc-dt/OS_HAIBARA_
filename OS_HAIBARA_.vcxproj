@@ -123,13 +123,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="cpu_scheduler.h" />
+    <ClInclude Include="CPUScheduler.h" />
     <ClInclude Include="DeadlockHandler.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="PageReplacement.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cpu_scheduler.cpp" />
+    <ClCompile Include="CPUScheduler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PageReplacement.cpp" />
     <ClCompile Include="DeadlockHandler.cpp" />
