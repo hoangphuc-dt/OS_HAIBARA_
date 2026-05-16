@@ -12,8 +12,8 @@ void centerTextMain(string s, int width) {
 void showMainMenu(int choice) {
     vector<string> menu = {
         "[1] CPU Scheduling      ",
-        "[2] Page Replacement    ",
-        "[3] Banker's Algorithm  ",
+        "[2] Banker's Algorithm  ",
+        "[3] Page Replacement    ",
         "[0] Exit                "
     };
     vector<int> width = { 140, 140, 140, 140 };
@@ -116,7 +116,7 @@ int main() {
         if (mainChoice == 0) {
             cpuSchedulingMenu();
         }
-        else if (mainChoice == 1) {
+        else if (mainChoice == 2) {
             int n; setColor(14); cout << "Nhap so luong trang: "; setColor(7); cin >> n;
             vector<int> pages(n); setColor(11); cout << "Nhap chuoi tham chieu:\n"; setColor(7);
             for (int i = 0; i < n; i++) cin >> pages[i];
@@ -150,7 +150,7 @@ int main() {
                 system("pause");
             }
         }
-        else if (mainChoice == 2) {
+        else if (mainChoice == 1) {
             int choice = 0; char key;
             while (true) {
                 while (true) {
