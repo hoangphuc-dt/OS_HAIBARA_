@@ -1,6 +1,49 @@
 #include "DeadlockHandler.h"
 
-void printSafetyTable(int n, int m, vector<vector<int>> allocation, vector<vector<int>> maxMatrix, vector<vector<int>> need, vector<int> available)
+void centerTextBanker(string s, int width) {
+    int left = (width - s.size()) / 2;
+    for (int i = 0; i < left; i++)
+        cout << " ";
+    cout << s;
+}
+
+void showBanker(int choice) {
+
+    vector<string> menu = {
+        "                [1] Safety                ",
+        "                [2] Request               ",
+        "                [3] Deadlock Detection    ",
+        "                [0] Exit                  "
+    };
+    vector<int> width = { 140, 140, 140, 140 };
+
+    setColor(11);
+    cout << "\n";
+    centerTextBanker("================================================================================", 140);
+    cout << "\n";
+    centerTextBanker("BANKER'S ALGORITHM", 140);
+    cout << "\n";
+    centerTextBanker("================================================================================", 140);
+    cout << "\n\n";
+
+    for (int i = 0; i < menu.size(); i++) {
+        if (i == choice) setColor(14);
+        else setColor(10);
+        centerTextBanker(menu[i], width[i]);
+        cout << "\n\n";
+    }
+
+    setColor(11);
+    centerTextBanker("================================================================================", 140);
+    cout << "\n\n";
+    setColor(13);
+    centerTextBanker("     Use UP / DOWN arrow keys and ENTER to select", 140);
+    cout << "\n";
+    setColor(7);
+}
+
+
+void printSafetyTable(int n, int m, vector<vector<int>> allocation, vector<vector<int>> maxMatrix, vector<vector<int>> need, vector<int> available, int highlightProcess)
 {
     const int BLOCK = 18;
     cout << "\n===================== BANG DU LIEU =====================\n\n";
@@ -28,7 +71,14 @@ void printSafetyTable(int n, int m, vector<vector<int>> allocation, vector<vecto
     {
         setColor(CYAN);
         cout << left << setw(10) << ("P" + to_string(i));
-        setColor(WHITE);
+
+
+        if (i == highlightProcess)
+            setColor(GREEN);
+        else
+            setColor(WHITE);
+
+
         for (int j = 0; j < m; j++) cout << allocation[i][j] << " ";
         cout << setw(BLOCK - m * 2) << "";
         for (int j = 0; j < m; j++) cout << maxMatrix[i][j] << " ";
@@ -38,6 +88,8 @@ void printSafetyTable(int n, int m, vector<vector<int>> allocation, vector<vecto
         cout << setw(BLOCK - m * 2) << "";
         for (int j = 0; j < m; j++) cout << need[i][j] << " ";
         cout << endl;
+
+        setColor(WHITE);
     }
     cout << endl;
 }
@@ -184,7 +236,10 @@ void requestAlgorithm()
     for (int j = 0; j < m; j++) { if (request[j] > available[j]) { setColor(RED); cout << "\nTai nguyen khong du de cap phat\n"; setColor(WHITE); return; } }
     for (int j = 0; j < m; j++) { available[j] -= request[j]; allocation[p][j] += request[j]; need[p][j] -= request[j]; }
     cout << "\n===== SAU KHI CAP PHAT TAM =====\n";
-    printSafetyTable(n, m, allocation, maxMatrix, need, available);
+
+
+    printSafetyTable(n, m, allocation, maxMatrix, need, available, p);
+
     vector<int> safeSequence;
     if (isSafety(n, m, allocation, need, available, safeSequence))
     {
@@ -228,5 +283,44 @@ void deadlockDetection()
         setColor(RED); cout << "He thong bi deadlock\nDanh sach tien trinh bi deadlock: "; setColor(WHITE);
         for (int i = 0; i < deadlockProcesses.size(); i++) { cout << "P" << deadlockProcesses[i]; if (i != deadlockProcesses.size() - 1) cout << ", "; }
         cout << endl;
+    }
+}
+
+void showBankerMenu() {
+    int choice = 0; char key;
+    while (true) {
+        while (true) {
+            system("cls");
+
+
+            showBanker(choice);
+
+            key = _getch();
+            if (key == 224 || key == 0) key = _getch();
+            if (key == 72) choice = (choice - 1 + 4) % 4;
+            else if (key == 80) choice = (choice + 1) % 4;
+            else if (key == 13) break;
+        }
+        system("cls");
+
+
+        if (choice == 3) {
+            setColor(12);
+            cout << "Exiting. Goodbye!\n";
+            setColor(7);
+            break;
+        }
+
+        switch (choice) {
+        case 0: safetyAlgorithm(); break;
+        case 1: requestAlgorithm(); break;
+        case 2: deadlockDetection(); break;
+        }
+
+
+        cout << "\n";
+        setColor(10);
+        system("pause");
+        setColor(7);
     }
 }

@@ -2,7 +2,11 @@
 #define PAGEREPLACEMENT_H
 
 #include "Common.h"
-
+#include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>
+#include <conio.h>
 struct Step {
     int currentPage;
     vector<int> frame;
@@ -25,4 +29,6 @@ void printResult(vector<Step> rs);
 void printSimulation(vector<Step> rs, string name, int f);
 void compareAlgorithms(vector<Step> fifoResult, vector<Step> lruResult, vector<Step> optResult, vector<Step> clockResult);
 
-#endif
+void pageReplacementMenu();
+
+#endif 

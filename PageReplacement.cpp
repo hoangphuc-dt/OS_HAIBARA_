@@ -50,7 +50,7 @@ void showMenu(int choice) {
     centerText("================================================================================", 140);
     cout << "\n\n";
     setColor(13);
-    centerText("DUNG PHIM MUI TEN LEN/XUONG VA ENTER DE CHON", 140);
+    centerText("Use UP / DOWN arrow keys and ENTER to select", 140);
     cout << "\n";
     setColor(7);
 }
@@ -330,4 +330,104 @@ void compareAlgorithms(vector<Step> fifoResult, vector<Step> lruResult, vector<S
     cout << "|" << setw(22) << "CLOCK" << "|" << setw(12) << countFault(clockResult) << "|\n";
     printSpace(50);
     cout << "+----------------------+------------+\n";
+}
+
+
+void pageReplacementMenu() {
+    int n;
+    setColor(14);
+    cout << "Nhap so luong trang: ";
+    setColor(7);
+    cin >> n;
+
+    vector<int> pages(n);
+    setColor(11);
+    cout << "Nhap chuoi tham chieu:\n";
+    setColor(7);
+    for (int i = 0; i < n; i++) {
+        cin >> pages[i];
+    }
+
+    int f;
+    setColor(10);
+    cout << "Nhap so frame: ";
+    setColor(7);
+    cin >> f;
+
+    int choice = 0;
+    char key;
+
+    while (true) {
+        while (true) {
+            system("cls");
+            showMenu(choice);
+            key = _getch();
+            if (key == 224 || key == 0) {
+                key = _getch();
+            }
+            if (key == 72) {
+                choice = (choice - 1 + 6) % 6;
+            }
+            else if (key == 80) {
+                choice = (choice + 1) % 6;
+            }
+            else if (key == 13) {
+                break;
+            }
+        }
+
+        system("cls");
+        if (choice == 5) {
+            break;
+        }
+
+        switch (choice) {
+        case 0: {
+            vector<Step> rs = FIFO(pages, f);
+            printSimulation(rs, "FIFO ALGORITHM", f);
+            printResult(rs);
+            break;
+        }
+        case 1: {
+            vector<Step> rs = LRU(pages, f);
+            printSimulation(rs, "LRU ALGORITHM", f);
+            printResult(rs);
+            break;
+        }
+        case 2: {
+            vector<Step> rs = OPT(pages, f);
+            printSimulation(rs, "OPT ALGORITHM", f);
+            printResult(rs);
+            break;
+        }
+        case 3: {
+            vector<Step> rs = CLOCK(pages, f);
+            printSimulation(rs, "CLOCK ALGORITHM", f);
+            printResult(rs);
+            break;
+        }
+        case 4: {
+            vector<Step> fR = FIFO(pages, f);
+            vector<Step> lR = LRU(pages, f);
+            vector<Step> oR = OPT(pages, f);
+            vector<Step> cR = CLOCK(pages, f);
+
+            printSimulation(fR, "FIFO", f);
+            printResult(fR);
+
+            printSimulation(lR, "LRU", f);
+            printResult(lR);
+
+            printSimulation(oR, "OPT", f);
+            printResult(oR);
+
+            printSimulation(cR, "CLOCK", f);
+            printResult(cR);
+
+            compareAlgorithms(fR, lR, oR, cR);
+            break;
+        }
+        }
+        system("pause");
+    }
 }
