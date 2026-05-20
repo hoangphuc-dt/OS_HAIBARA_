@@ -32,6 +32,13 @@ struct GanttBlock {
     int    end_time;
 };
 
+// Carries the metrics that runAll() needs for comparison
+struct AlgorithmResult {
+    string name;
+    float  avgTAT = 0;
+    float  avgWT = 0;
+};
+
 // Hàm khởi chạy chính
 void cpuSchedulingMenu();
 
