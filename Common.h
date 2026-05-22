@@ -9,7 +9,6 @@
 
 using namespace std;
 
-// Dinh nghia mau sac tu module Deadlock
 #define GREEN 10
 #define BLUE 9
 #define YELLOW 14

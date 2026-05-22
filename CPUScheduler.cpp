@@ -7,9 +7,7 @@ void centerTextCPU(string s, int width) {
     cout << s;
 }
 
-// ----------------------------------------------
-//  Arrow-key menu
-// ----------------------------------------------
+
 void showCPUMenu(int choice) {
     const vector<string> items = {
         "[ 1 ]  First-Come First-Serve   (FCFS)                    ",
@@ -50,9 +48,7 @@ void showCPUMenu(int choice) {
     setColor(7);
 }
 
-// ----------------------------------------------
-//  Output helpers
-// ----------------------------------------------
+
 
 void printGanttChart(const vector<GanttBlock>& gantt) {
     if (gantt.empty()) return;
@@ -60,26 +56,26 @@ void printGanttChart(const vector<GanttBlock>& gantt) {
     cout << "\n--- Gantt Chart ---\n";
     setColor(WHITE);
 
-    // Top border
+   
     for (const auto& b : gantt) {
         cout << "+";
         for (size_t i = 0; i < b.name.length() + 2; ++i) cout << "-";
     }
     cout << "+\n";
 
-    // Process names
+    
     for (const auto& b : gantt)
         cout << "| " << b.name << " ";
     cout << "|\n";
 
-    // Bottom border
+    
     for (const auto& b : gantt) {
         cout << "+";
         for (size_t i = 0; i < b.name.length() + 2; ++i) cout << "-";
     }
     cout << "+\n";
 
-    // Time markers
+   
     for (const auto& b : gantt) {
         cout << b.start_time;
         int numDigits = (int)to_string(b.start_time).length();
@@ -142,9 +138,7 @@ AlgorithmResult printResults(vector<Process>& completed, const string& algoName 
     return AlgorithmResult{ algoName, (float)totalTAT / n, (float)totalWT / n };
 }
 
-// ----------------------------------------------
-//  Input helpers
-// ----------------------------------------------
+
 
 vector<Process> readProcesses(bool hasPriority) {
     vector<Process> list;
@@ -181,30 +175,22 @@ vector<Process> readProcesses(bool hasPriority) {
         }
     }
     cin.clear();
-    cin.ignore((numeric_limits<streamsize>::max)(), '\n');  // Flush leftover input
+    cin.ignore((numeric_limits<streamsize>::max)(), '\n'); 
     return list;
 }
 
-// ----------------------------------------------
-//  Helper: push newly arrived processes into a
-//  ready-queue (used by SRTF / Priority-P tick loops)
-// ----------------------------------------------
 void updateGantt(vector<GanttBlock>& gantt, const string& name, int time) {
     if (gantt.empty() || gantt.back().name != name)
         gantt.push_back({ name, time, time + 1 });
     else
         gantt.back().end_time = time + 1;
 }
-
-// ----------------------------------------------
-//  1. FIRST-COME FIRST-SERVE  (non-preemptive)
-// ----------------------------------------------
 AlgorithmResult runFCFS(vector<Process> procs) {
     setColor(CYAN);
     cout << " First-Come First-Serve  (FCFS)\n";
     setColor(WHITE);
 
-    sort(procs.begin(), procs.end());   // Sort by AT
+    sort(procs.begin(), procs.end());   
 
     vector<GanttBlock> gantt;
     vector<Process>    completed;
@@ -212,7 +198,6 @@ AlgorithmResult runFCFS(vector<Process> procs) {
 
     for (auto& p : procs) {
         if (currentTime < p.AT) {
-            // CPU is idle until this process arrives
             gantt.push_back({ "IDLE", (int)currentTime, (int)p.AT });
             currentTime = p.AT;
         }
@@ -225,10 +210,6 @@ AlgorithmResult runFCFS(vector<Process> procs) {
     printGanttChart(gantt);
     return printResults(completed, "FCFS");
 }
-
-// ----------------------------------------------
-//  2. SHORTEST JOB FIRST  (non-preemptive)
-// ----------------------------------------------
 AlgorithmResult runSJF(vector<Process> procs) {
     setColor(CYAN);
     cout << " Shortest Job First  (SJF)  -  Non-Preemptive\n";
@@ -254,7 +235,7 @@ AlgorithmResult runSJF(vector<Process> procs) {
             }
 
         if (bestIdx == -1) {
-            // CPU idle - jump to next arrival
+           
             float nextAT = 1e9f;
             for (int i = 0; i < n; ++i)
                 if (!done[i]) nextAT = min(nextAT, procs[i].AT);
@@ -277,9 +258,6 @@ AlgorithmResult runSJF(vector<Process> procs) {
     return printResults(completed, "SJF");
 }
 
-// ----------------------------------------------
-//  3. SHORTEST REMAINING TIME FIRST  (preemptive SJF)
-// ----------------------------------------------
 AlgorithmResult runSRTF(vector<Process> procs) {
     setColor(CYAN);
     cout << " Shortest Remaining Time First  (SRTF) - Preemptive\n";
@@ -321,10 +299,7 @@ AlgorithmResult runSRTF(vector<Process> procs) {
     return printResults(completed, "SRTF");
 }
 
-// ----------------------------------------------
-//  4. PRIORITY SCHEDULING  (non-preemptive)
-//       Lower priority number = higher urgency
-// ----------------------------------------------
+
 AlgorithmResult runPriorityNP(vector<Process> procs) {
     setColor(CYAN);
     cout << " Priority Scheduling - Non-Preemptive\n";
@@ -373,11 +348,7 @@ AlgorithmResult runPriorityNP(vector<Process> procs) {
     return printResults(completed, "Priority (Non-Preemptive)");
 }
 
-// ----------------------------------------------
-//  5. PRIORITY SCHEDULING  (preemptive)
-//     Structurally identical to SRTF but compares
-//     priority instead of remaining time.
-// ----------------------------------------------
+
 AlgorithmResult runPriorityP(vector<Process> procs) {
     setColor(CYAN);
     cout << " Priority Scheduling  -  Preemptive\n";
@@ -419,25 +390,23 @@ AlgorithmResult runPriorityP(vector<Process> procs) {
     return printResults(completed, "Priority (Preemptive)");
 }
 
-// ----------------------------------------------
-//  6. ROUND ROBIN  (preemptive, fixed time quantum)
-// ----------------------------------------------
+
 AlgorithmResult runRoundRobin(vector<Process> procs, int quantum) {
     setColor(CYAN);
     cout << " Round Robin  (RR)  -  Quantum = " << quantum << "\n";
     setColor(WHITE);
 
-    sort(procs.begin(), procs.end());   // Sort by AT
+    sort(procs.begin(), procs.end());   
 
     int n = (int)procs.size();
     vector<GanttBlock> gantt;
     vector<Process>    completed;
-    queue<int>         rq;               // Indices into procs[]
+    queue<int>         rq;               
     vector<bool>       arrived(n, false);
     float currentTime = 0;
     int   completedCnt = 0;
 
-    // Lambda: enqueue all processes that have now arrived
+    
     auto enqueueArrivals = [&]() {
         for (int i = 0; i < n; ++i)
             if (!arrived[i] && procs[i].AT <= currentTime) {
@@ -446,11 +415,11 @@ AlgorithmResult runRoundRobin(vector<Process> procs, int quantum) {
             }
         };
 
-    enqueueArrivals();   // Seed with t=0 arrivals
+    enqueueArrivals();   
 
     while (completedCnt < n) {
         if (rq.empty()) {
-            // CPU idle - jump to the next unarrived process
+           
             float nextAT = 1e9f;
             for (int i = 0; i < n; ++i)
                 if (!arrived[i]) nextAT = min(nextAT, procs[i].AT);
@@ -463,7 +432,6 @@ AlgorithmResult runRoundRobin(vector<Process> procs, int quantum) {
         int idx = rq.front();
         rq.pop();
 
-        // Run for min(quantum, remaining time)
         float slice = min((float)quantum, procs[idx].RT);
         int   start = (int)currentTime;
         procs[idx].RT -= slice;
@@ -471,17 +439,17 @@ AlgorithmResult runRoundRobin(vector<Process> procs, int quantum) {
 
         gantt.push_back({ procs[idx].name, start, (int)currentTime });
 
-        // Enqueue any process that arrived during this slice
+       
         enqueueArrivals();
 
         if (procs[idx].RT <= 0) {
-            // Process finished
+           
             procs[idx].ET = currentTime;
             completed.push_back(procs[idx]);
             ++completedCnt;
         }
         else {
-            // Still has work left - goes to the back of the queue
+            
             rq.push(idx);
         }
     }
@@ -490,14 +458,9 @@ AlgorithmResult runRoundRobin(vector<Process> procs, int quantum) {
     return printResults(completed, "Round Robin (Q=" + to_string(quantum) + ")");
 }
 
-// ----------------------------------------------
-//  7. RUN ALL  -  runs every algorithm on the
-//     same process set and prints a comparison
-// ----------------------------------------------
+
 void runAll(vector<Process> procs, int quantum) {
     const string divider(62, '-');
-
-    // Helper: print a section header
     auto header = [&](const string& title) {
         setColor(CYAN);
         cout << "\n" << string(62, '=') << "\n";
@@ -526,7 +489,6 @@ void runAll(vector<Process> procs, int quantum) {
     header("ROUND ROBIN");
     results.push_back(runRoundRobin(procs, quantum));
 
-    // -- Comparison table -------------------------------------
     setColor(YELLOW);
     cout << "\n\n" << string(62, '=') << "\n";
     cout << "              ALGORITHM  COMPARISON  SUMMARY\n";
@@ -542,7 +504,7 @@ void runAll(vector<Process> procs, int quantum) {
     setColor(WHITE);
     cout << divider << "\n";
 
-    // Find best (lowest) values for highlighting
+   
     float bestTAT = 1e9f, bestWT = 1e9f;
     for (const auto& r : results) {
         bestTAT = min(bestTAT, r.avgTAT);
@@ -557,11 +519,10 @@ void runAll(vector<Process> procs, int quantum) {
             setColor(GREEN);
         cout << left << setw(30) << r.name;
 
-        // TAT column
+       
         setColor(isBestTAT ? GREEN : WHITE);
         cout << setw(16) << r.avgTAT;
 
-        // WT column
         setColor(isBestWT ? GREEN : WHITE);
         cout << setw(14) << r.avgWT;
 
@@ -571,7 +532,7 @@ void runAll(vector<Process> procs, int quantum) {
 
     cout << divider << "\n";
 
-    // Determine overall winner (lowest sum of avgTAT + avgWT as a composite score)
+   
     auto best = min_element(results.begin(), results.end(),
         [](const AlgorithmResult& a, const AlgorithmResult& b) {
             return (a.avgTAT + a.avgWT) < (b.avgTAT + b.avgWT);
@@ -584,9 +545,7 @@ void runAll(vector<Process> procs, int quantum) {
     setColor(WHITE);
 }
 
-// ----------------------------------------------
-//  Main menu  (arrow-key navigation)
-// ----------------------------------------------
+
 void cpuSchedulingMenu() {
     const int MENU_SIZE = 8;
     int choice = 0;
@@ -594,25 +553,25 @@ void cpuSchedulingMenu() {
 
     while (true) {
 
-        // -- Navigation loop -------------------------
+      
         while (true) {
             system("cls");
             showCPUMenu(choice);
 
             key = _getch();
 
-            // Arrow keys send two bytes: 0xE0 (224) or 0x00 followed by the code
+            
             if (key == (char)224 || key == (char)0)
                 key = _getch();
 
-            if (key == 72)       choice = (choice - 1 + MENU_SIZE) % MENU_SIZE; // Up
-            else if (key == 80)  choice = (choice + 1) % MENU_SIZE;             // Down
-            else if (key == 13)  break;                                         // Enter
+            if (key == 72)       choice = (choice - 1 + MENU_SIZE) % MENU_SIZE;
+            else if (key == 80)  choice = (choice + 1) % MENU_SIZE;             
+            else if (key == 13)  break;                                         
         }
 
         system("cls");
 
-        // -- Exit ------------------------------------
+        
         if (choice == 7) {
             setColor(RED);
             cout << "Exiting. Goodbye!\n";
@@ -620,9 +579,9 @@ void cpuSchedulingMenu() {
             return;
         }
 
-        // -- Request Quantum Time before readProcesses() so it wouldn't take garbage value -------
+       
         int quantum = 1;
-        if (choice == 5 || choice == 6) {   // RR (5) hoặc Run All (6)
+        if (choice == 5 || choice == 6) {  
             setColor(YELLOW);
             cout << "\nTime Quantum: ";
             setColor(WHITE);
@@ -635,7 +594,7 @@ void cpuSchedulingMenu() {
                 continue;
             }
         }
-        // -- Read processes --------------------------
+        
         bool hasPriority = (choice == 3 || choice == 4 || choice == 6);
         vector<Process> procs = readProcesses(hasPriority);
 
@@ -647,7 +606,7 @@ void cpuSchedulingMenu() {
             continue;
         }
 
-        // -- Run chosen algorithm --------------------
+        
         switch (choice) {
         case 0: runFCFS(procs);         break;
         case 1: runSJF(procs);          break;
