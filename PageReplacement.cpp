@@ -1,27 +1,31 @@
-#include "PageReplacement.h"
+﻿#include "PageReplacement.h"
 
 void printSpace(int n) {
     for (int i = 0; i < n; i++)
         cout << " ";
 }
+
 void printLine(int n, int margin) {
     printSpace(margin);
     for (int i = 0; i < n; i++)
         cout << "=";
     cout << "\n";
 }
+
 void printSubLine(int n, int margin) {
     printSpace(margin);
     for (int i = 0; i < n; i++)
         cout << "-";
     cout << "\n";
 }
+
 void centerText(string s, int width) {
     int left = (width - s.size()) / 2;
     for (int i = 0; i < left; i++)
         cout << " ";
     cout << s;
 }
+
 void showMenu(int choice) {
     vector<string> menu = {
         "[1] FIFO",
@@ -32,6 +36,7 @@ void showMenu(int choice) {
         "[0] EXIT"
     };
     vector<int> width = { 140, 140, 140, 142, 143, 140 };
+
     setColor(11);
     cout << "\n";
     centerText("================================================================================", 140);
@@ -40,12 +45,15 @@ void showMenu(int choice) {
     cout << "\n";
     centerText("================================================================================", 140);
     cout << "\n\n";
+
     for (int i = 0; i < menu.size(); i++) {
         if (i == choice) setColor(14);
         else setColor(10);
+
         centerText(menu[i], width[i]);
         cout << "\n\n";
     }
+
     setColor(11);
     centerText("================================================================================", 140);
     cout << "\n\n";
@@ -54,18 +62,22 @@ void showMenu(int choice) {
     cout << "\n";
     setColor(7);
 }
+
 vector<Step> FIFO(vector<int> pages, int f) {
     vector<Step> result;
     vector<int> frame(f, -1);
     int pointer = 0;
+
     for (int page : pages) {
         Step step;
         step.currentPage = page;
         step.replacedPage = -1;
         bool found = false;
+
         for (int x : frame) {
             if (x == page) { found = true; break; }
         }
+
         if (found) { step.isFault = false; }
         else {
             step.isFault = true;
@@ -78,17 +90,20 @@ vector<Step> FIFO(vector<int> pages, int f) {
     }
     return result;
 }
+
 vector<Step> LRU(vector<int> pages, int f) {
     vector<Step> result;
     vector<int> frame(f, -1);
     vector<int> lastUsed(f, -1);
     int timer = 0;
+
     for (int page : pages) {
         timer++;
         Step step;
         step.currentPage = page;
         step.replacedPage = -1;
         bool found = false;
+
         for (int i = 0; i < f; i++) {
             if (frame[i] == page) {
                 found = true;
@@ -96,6 +111,7 @@ vector<Step> LRU(vector<int> pages, int f) {
                 break;
             }
         }
+
         if (found) { step.isFault = false; }
         else {
             step.isFault = true;
@@ -119,18 +135,22 @@ vector<Step> LRU(vector<int> pages, int f) {
     }
     return result;
 }
+
 vector<Step> OPT(vector<int> pages, int f) {
     vector<Step> result;
     vector<int> frame(f, -1);
+
     for (int i = 0; i < pages.size(); i++) {
         int page = pages[i];
         Step step;
         step.currentPage = page;
         step.replacedPage = -1;
         bool found = false;
+
         for (int x : frame) {
             if (x == page) { found = true; break; }
         }
+
         if (found) { step.isFault = false; }
         else {
             step.isFault = true;
@@ -157,16 +177,19 @@ vector<Step> OPT(vector<int> pages, int f) {
     }
     return result;
 }
+
 vector<Step> CLOCK(vector<int> pages, int f) {
     vector<Step> result;
     vector<int> frame(f, -1);
     vector<int> ref(f, 0);
     int pointer = 0;
+
     for (int page : pages) {
         Step step;
         step.currentPage = page;
         step.replacedPage = -1;
         bool found = false;
+
         for (int i = 0; i < f; i++) {
             if (frame[i] == page) {
                 found = true;
@@ -174,6 +197,7 @@ vector<Step> CLOCK(vector<int> pages, int f) {
                 break;
             }
         }
+
         if (found) { step.isFault = false; }
         else {
             step.isFault = true;
@@ -197,14 +221,17 @@ vector<Step> CLOCK(vector<int> pages, int f) {
     }
     return result;
 }
+
 int countFault(vector<Step> rs) {
     int cnt = 0;
     for (Step s : rs) { if (s.isFault) cnt++; }
     return cnt;
 }
+
 void printResult(vector<Step> rs) {
     int faultCount = 0;
     int margin = 25;
+
     printLine(89, margin);
     printSpace(margin);
     setColor(11);
@@ -212,22 +239,28 @@ void printResult(vector<Step> rs) {
     setColor(7);
     cout << "\n";
     printLine(89, margin);
+
     for (Step s : rs) {
         printSpace(margin);
         cout << "|" << setw(10) << s.currentPage << "|";
+
         if (s.isFault) { setColor(12); cout << setw(18) << "PAGE FAULT"; faultCount++; }
         else { setColor(10); cout << setw(18) << "PAGE HIT"; }
+
         setColor(7);
         cout << "|";
+
         string frameText = "";
         for (int x : s.frame) {
             if (x == -1) frameText += "- ";
             else frameText += to_string(x) + " ";
         }
         cout << setw(25) << frameText << "|";
+
         if (s.replacedPage == -1) cout << setw(15) << "-";
         else cout << setw(15) << s.replacedPage;
         cout << "|";
+
         string bitText = "";
         if (s.refBits.empty()) { bitText = "-"; }
         else {
@@ -244,6 +277,7 @@ void printResult(vector<Step> rs) {
     cout << "Tong so Page Fault: " << faultCount << "\n";
     setColor(7);
 }
+
 void printSimulation(vector<Step> rs, string name, int f) {
     int margin = 25;
     cout << "\n";
@@ -254,6 +288,7 @@ void printSimulation(vector<Step> rs, string name, int f) {
     setColor(7);
     printLine(90, margin);
     cout << "\n";
+
     printSpace(margin);
     cout << setw(8) << "Page ";
     for (int j = 0; j < rs.size(); j++) cout << "+----";
@@ -266,6 +301,7 @@ void printSimulation(vector<Step> rs, string name, int f) {
     cout << "        ";
     for (int j = 0; j < rs.size(); j++) cout << "+----";
     cout << "+\n\n";
+
     for (int i = 0; i < f; i++) {
         printSpace(margin);
         cout << "Frame " << i + 1 << " ";
@@ -302,6 +338,7 @@ void printSimulation(vector<Step> rs, string name, int f) {
     for (int j = 0; j < rs.size(); j++) cout << "+----";
     cout << "+\n\n";
 }
+
 void compareAlgorithms(vector<Step> fifoResult, vector<Step> lruResult, vector<Step> optResult, vector<Step> clockResult) {
     int margin = 52;
     cout << "\n";
@@ -332,77 +369,119 @@ void compareAlgorithms(vector<Step> fifoResult, vector<Step> lruResult, vector<S
     cout << "+----------------------+------------+\n";
 }
 
-
 void pageReplacementMenu() {
-    int n;
-    setColor(14);
-    cout << "Nhap so luong trang: ";
-    setColor(7);
-    cin >> n;
-
-    vector<int> pages(n);
-    setColor(11);
-    cout << "Nhap chuoi tham chieu:\n";
-    setColor(7);
-    for (int i = 0; i < n; i++) {
-        cin >> pages[i];
-    }
-
-    int f;
-    setColor(10);
-    cout << "Nhap so frame: ";
-    setColor(7);
-    cin >> f;
+   
+    system("mode con cols=140 lines=45");
 
     int choice = 0;
     char key;
 
     while (true) {
+        system("cls");
+
+        int n;
+        setColor(14);
+        cout << "Nhap so luong trang: ";
+        setColor(7);
+        cin >> n;
+
+        vector<int> pages(n);
+        setColor(11);
+        cout << "Nhap chuoi tham chieu:\n";
+        setColor(7);
+        for (int i = 0; i < n; i++) {
+            cin >> pages[i];
+        }
+
+        int f;
+        setColor(10);
+        cout << "Nhap so frame: ";
+        setColor(7);
+        cin >> f;
+
         while (true) {
             system("cls");
             showMenu(choice);
             key = _getch();
+
             if (key == 224 || key == 0) {
                 key = _getch();
             }
-            if (key == 72) {
+            if (key == 72) { 
                 choice = (choice - 1 + 6) % 6;
             }
-            else if (key == 80) {
+            else if (key == 80) { 
                 choice = (choice + 1) % 6;
             }
-            else if (key == 13) {
+            else if (key == 13) { 
                 break;
             }
         }
 
         system("cls");
-        if (choice == 5) {
-            break;
-        }
-
+        
         switch (choice) {
         case 0: {
             vector<Step> rs = FIFO(pages, f);
             printSimulation(rs, "FIFO ALGORITHM", f);
+
+            cout << "\n";
+            setColor(14);
+            printLine(40, 50);
+            centerText("BANG CHI TIET", 140);
+            cout << "\n";
+            printLine(40, 50);
+            setColor(7);
+            cout << "\n";
+
             printResult(rs);
             break;
         }
         case 1: {
             vector<Step> rs = LRU(pages, f);
             printSimulation(rs, "LRU ALGORITHM", f);
+
+            cout << "\n";
+            setColor(14);
+            printLine(40, 50);
+            centerText("BANG CHI TIET", 140);
+            cout << "\n";
+            printLine(40, 50);
+            setColor(7);
+            cout << "\n";
+
             printResult(rs);
             break;
         }
         case 2: {
             vector<Step> rs = OPT(pages, f);
             printSimulation(rs, "OPT ALGORITHM", f);
+
+            cout << "\n";
+            setColor(14);
+            printLine(40, 50);
+            centerText("BANG CHI TIET", 140);
+            cout << "\n";
+            printLine(40, 50);
+            setColor(7);
+            cout << "\n";
+
             printResult(rs);
             break;
         }
         case 3: {
             vector<Step> rs = CLOCK(pages, f);
             printSimulation(rs, "CLOCK ALGORITHM", f);
+
+            cout << "\n";
+            setColor(14);
+            printLine(40, 50);
+            centerText("BANG CHI TIET", 140);
+            cout << "\n";
+            printLine(40, 50);
+            setColor(7);
+            cout << "\n";
+
             printResult(rs);
             break;
         }
@@ -413,21 +492,74 @@ void pageReplacementMenu() {
             vector<Step> cR = CLOCK(pages, f);
 
             printSimulation(fR, "FIFO", f);
+            cout << "\n";
+            setColor(14);
+            printLine(40, 50);
+            centerText("BANG CHI TIET FIFO", 140);
+            cout << "\n";
+            printLine(40, 50);
+            setColor(7);
+            cout << "\n";
             printResult(fR);
 
             printSimulation(lR, "LRU", f);
+            cout << "\n";
+            setColor(14);
+            printLine(40, 50);
+            centerText("BANG CHI TIET LRU", 140);
+            cout << "\n";
+            printLine(40, 50);
+            setColor(7);
+            cout << "\n";
             printResult(lR);
 
             printSimulation(oR, "OPT", f);
+            cout << "\n";
+            setColor(14);
+            printLine(40, 50);
+            centerText("BANG CHI TIET OPT", 140);
+            cout << "\n";
+            printLine(40, 50);
+            setColor(7);
+            cout << "\n";
             printResult(oR);
 
             printSimulation(cR, "CLOCK", f);
+            cout << "\n";
+            setColor(14);
+            printLine(40, 50);
+            centerText("BANG CHI TIET CLOCK", 140);
+            cout << "\n";
+            printLine(40, 50);
+            setColor(7);
+            cout << "\n";
             printResult(cR);
 
             compareAlgorithms(fR, lR, oR, cR);
             break;
         }
+        case 5: {
+            setColor(12);
+            cout << "\nThoat module Page Replacement\n";
+            setColor(7);
+            
+            return;
         }
+        }
+
+        cout << "\n";
         system("pause");
+
+        char again;
+        cout << "\nNhap testcase moi? (y/n): ";
+        cin >> again;
+
+        if (again == 'y' || again == 'Y') {
+            choice = 0;
+            continue; 
+        }
+        else {
+            break;
+        }
     }
 }
