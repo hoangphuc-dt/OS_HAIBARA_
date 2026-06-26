@@ -1,3 +1,6 @@
+#ifndef COMMON_H
+#define COMMON_H
+
 #include <iostream>
 #include <vector>
 #include <queue>
@@ -18,4 +21,8 @@ using namespace std;
 #define PINK 13
 #define CYAN 11
 
-void setColor(int color);
+inline void setColor(int color) {
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(h, color);
+}
+#endif
