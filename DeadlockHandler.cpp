@@ -1,6 +1,6 @@
 ﻿#include "DeadlockHandler.h"
 
-// Căn giữa văn bản theo độ rộng màn hình console 140 ký tự
+
 void centerTextBanker(string s, int width) {
     int left = (width - (int)s.size()) / 2;
     if (left > 0) {
@@ -9,7 +9,6 @@ void centerTextBanker(string s, int width) {
     cout << s;
 }
 
-// Hiển thị menu đồ họa tương tác (Giữ nguyên cấu trúc giao diện lớn)
 void showBanker(int choice) {
     vector<string> menu = {
         "                [1] Safety                ",
@@ -19,7 +18,7 @@ void showBanker(int choice) {
     };
     vector<int> width = { 140, 140, 140, 140 };
 
-    setColor(11); // CYAN
+    setColor(11); 
     cout << "\n";
     centerTextBanker("================================================================================", 140);
     cout << "\n";
@@ -29,8 +28,8 @@ void showBanker(int choice) {
     cout << "\n\n";
 
     for (int i = 0; i < (int)menu.size(); i++) {
-        if (i == choice) setColor(14); // YELLOW
-        else setColor(10); // GREEN
+        if (i == choice) setColor(14); 
+        else setColor(10); 
         centerTextBanker(menu[i], width[i]);
         cout << "\n\n";
     }
@@ -38,10 +37,10 @@ void showBanker(int choice) {
     setColor(11);
     centerTextBanker("================================================================================", 140);
     cout << "\n\n";
-    setColor(13); // PINK
+    setColor(13); 
     centerTextBanker("      Use UP / DOWN arrow keys and ENTER to select", 140);
     cout << "\n";
-    setColor(15); // WHITE
+    setColor(15); 
 }
 
 void clearInput() {
@@ -196,7 +195,7 @@ void inputRequest(vector<vector<int>>& request, int n, int m) {
     } while (error);
 }
 
-// ĐÃ SỬA: Xóa bỏ `= 1` hoặc `= -1` ở tham số cuối cùng để tránh lỗi C2572
+
 void printSafetyTable(
     int n, int m,
     vector<vector<int>> allocation,
@@ -326,7 +325,7 @@ bool isSafety(
     return true;
 }
 
-// ====================== SAFETY ALGORITHM ======================
+
 void safetyAlgorithm() {
     int n, m;
     inputNM(n, m);
@@ -341,7 +340,7 @@ void safetyAlgorithm() {
     inputMax(maxMatrix, allocation, n, m);
     inputInstance(instance, allocation, n, m);
 
-    // Tính toán tự động Available = Instance - Tổng Allocation
+    
     for (int j = 0; j < m; j++) {
         int sumAllocation = 0;
         for (int i = 0; i < n; i++) {
@@ -370,7 +369,7 @@ void safetyAlgorithm() {
     }
 }
 
-// ====================== REQUEST ALGORITHM ======================
+
 void requestAlgorithm() {
     int n, m;
     inputNM(n, m);
@@ -385,7 +384,7 @@ void requestAlgorithm() {
     inputMax(maxMatrix, allocation, n, m);
     inputInstance(instance, allocation, n, m);
 
-    // Tính toán tự động Available = Instance - Tổng Allocation
+    
     for (int j = 0; j < m; j++) {
         int sumAllocation = 0;
         for (int i = 0; i < n; i++) {
@@ -461,7 +460,7 @@ void requestAlgorithm() {
     }
 }
 
-// ====================== DEADLOCK DETECTION ======================
+
 void deadlockDetection() {
     int n, m;
     inputNM(n, m);
@@ -475,7 +474,7 @@ void deadlockDetection() {
     inputRequest(request, n, m);
     inputInstance(instance, allocation, n, m);
 
-    // Tính toán tự động Available = Instance - Tổng Allocation
+    
     for (int j = 0; j < m; j++) {
         int sumAllocation = 0;
         for (int i = 0; i < n; i++) {
@@ -530,7 +529,7 @@ void deadlockDetection() {
     }
 }
 
-// Điều hướng luồng Menu di chuyển phím mũi tên lớn
+
 void showBankerMenu() {
     int choice = 0; char key;
     while (true) {
@@ -540,9 +539,9 @@ void showBankerMenu() {
 
             key = _getch();
             if (key == 224 || key == 0) key = _getch();
-            if (key == 72) choice = (choice - 1 + 4) % 4; // Mũi tên lên
-            else if (key == 80) choice = (choice + 1) % 4; // Mũi tên xuống
-            else if (key == 13) break; // Phím Enter
+            if (key == 72) choice = (choice - 1 + 4) % 4; 
+            else if (key == 80) choice = (choice + 1) % 4; 
+            else if (key == 13) break; 
         }
         system("cls");
 
