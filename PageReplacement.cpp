@@ -9,7 +9,7 @@ bool frameDaDay(vector<int> frame) {
     return true;
 }
 
-
+void printSpace(int n) {
     for (int i = 0; i < n; i++)
         cout << " ";
 }
